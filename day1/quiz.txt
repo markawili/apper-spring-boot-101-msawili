@@ -1,0 +1,8 @@
+1.) Java Enterprise Edition
+2.) Boilerplate codes are essentially codes that are repeated
+3.) Spring Framework
+4.) Pivotal
+5.) https://start.spring.io/
+6.) There is no need for a web server. For example, PHP needs Apache WebServer to run.
+7-9.) In practice, dependency injection reduces boilerplate codes. The reason being Spring injects objects that a service/class may need as "dependencies"
+10.) mvn spring-boot:run
