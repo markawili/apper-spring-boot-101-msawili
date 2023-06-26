@@ -2,6 +2,7 @@ package com.msawili;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,30 +23,41 @@ public class AccountController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateAccountResponse createAccount(@RequestBody CreateAccountRequest request) {
+        try {
+            Account newAccount = accountService.create(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword());
 
-        Account newAccount = accountService.create(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword());
+            CreateAccountResponse response = new CreateAccountResponse();
+            int VERIFICATION_CODE_LENGTH = 6;
+            response.setVerificationCode(verificationService.generateRandomCharacters(VERIFICATION_CODE_LENGTH));
 
-        CreateAccountResponse response = new CreateAccountResponse();
-        int VERIFICATION_CODE_LENGTH = 6;
-        response.setVerificationCode(verificationService.generateRandomCharacters(VERIFICATION_CODE_LENGTH));
-
-        return response;
+            return response;
+        } catch (UsernameAlreadyRegisteredException err) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, err.getMessage(), err);
+        }
     }
 
     @PutMapping("{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public UpdateAccountResponse updateAccount(@PathVariable String accountId, @RequestBody CreateAccountRequest request) {
-        UpdateAccountResponse response = new UpdateAccountResponse();
-        response.setLastUpdate(accountService.update(accountId, request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword()));
+        try {
+            UpdateAccountResponse response = new UpdateAccountResponse();
+            response.setLastUpdate(accountService.update(accountId, request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword()));
 
-        return response;
+            return response;
+        } catch (AccountNotFoundException err) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, err.getMessage(), err);
+        }
     }
 
     @GetMapping("{accountId}")
     public GetAccountResponse getAccount(@PathVariable String accountId) {
-        Account account = accountService.get(accountId);
+        try {
+            Account account = accountService.get(accountId);
 
-        return getGetAccountResponse(account);
+            return getGetAccountResponse(account);
+        } catch (AccountNotFoundException err) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, err.getMessage(), err);
+        }
     }
 
     @GetMapping
@@ -63,7 +75,11 @@ public class AccountController {
     @DeleteMapping("{accountId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccount(@PathVariable String accountId) {
-        accountService.delete(accountId);
+        try {
+            accountService.delete(accountId);
+        } catch (AccountNotFoundException err) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, err.getMessage(), err);
+        }
     }
 
     private GetAccountResponse getGetAccountResponse(Account account) {
