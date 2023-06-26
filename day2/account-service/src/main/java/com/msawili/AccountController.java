@@ -3,6 +3,7 @@ package com.msawili;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,14 @@ public class AccountController {
         int VERIFICATION_CODE_LENGTH = 6;
         response.setVerificationCode(verificationService.generateRandomCharacters(VERIFICATION_CODE_LENGTH));
 
-        System.out.println(request);
+        return response;
+    }
+
+    @PutMapping("{accountId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UpdateAccountResponse updateAccount(@PathVariable String accountId, @RequestBody CreateAccountRequest request) {
+        UpdateAccountResponse response = new UpdateAccountResponse();
+        response.setLastUpdate(accountService.update(accountId, request.getFirstName(), request.getLastName(), request.getEmail(), request.getPassword()));
 
         return response;
     }

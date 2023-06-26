@@ -22,7 +22,7 @@ public class AccountService {
 
         String id = idGeneratorService.getNextId();
         account.setId(id);
-        System.out.println("Generated ID: " + id);
+
         account.setCreationDate(LocalDateTime.now());
         account.setBalance(1_000.00);
 
@@ -49,5 +49,21 @@ public class AccountService {
         return accountList;
     }
 
+    public LocalDateTime update(String accountId, String firstName, String lastName, String username, String password) {
+        Account account = get(accountId);
+        account.setFirstName(firstName);
+        account.setLastName(lastName);
+        account.setUsername(username);
+        account.setClearPassword(password);
+        LocalDateTime timeUpdated = LocalDateTime.now();
+        account.setLastUpdated(timeUpdated);
 
+        accountList.set(accountList.indexOf(account), account);
+
+        return timeUpdated;
+    }
+
+    public void delete(String accountId) {
+        accountList.remove(get(accountId));
+    }
 }
