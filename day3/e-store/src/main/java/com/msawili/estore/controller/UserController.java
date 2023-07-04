@@ -1,11 +1,10 @@
 package com.msawili.estore.controller;
 
 import com.msawili.estore.exception.InvalidUserAgeException;
-import com.msawili.estore.request.CreateUserRequest;
-import com.msawili.estore.response.CreateUserResponse;
+import com.msawili.estore.payload.request.CreateUserRequest;
+import com.msawili.estore.payload.response.CreateUserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;

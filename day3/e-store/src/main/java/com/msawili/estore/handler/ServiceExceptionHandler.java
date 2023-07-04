@@ -1,8 +1,8 @@
 package com.msawili.estore.handler;
 
 import com.msawili.estore.exception.InvalidUserAgeException;
-import com.msawili.estore.record.AgeError;
-import com.msawili.estore.record.ServiceError;
+import com.msawili.estore.payload.record.AgeError;
+import com.msawili.estore.payload.record.ServiceError;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

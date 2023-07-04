@@ -1,4 +1,4 @@
-package com.msawili.estore.record;
+package com.msawili.estore.payload.record;
 
 import java.util.Map;
 

@@ -1,9 +1,6 @@
-package com.msawili.estore.response;
+package com.msawili.estore.payload.response;
 
-import com.msawili.estore.request.CreateUserRequest;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @Data
 public class CreateUserResponse {
