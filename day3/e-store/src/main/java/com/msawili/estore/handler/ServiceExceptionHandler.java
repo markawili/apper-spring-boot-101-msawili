@@ -16,6 +16,12 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ServiceExceptionHandler {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidUserAgeException.class)
+    @ResponseBody
+    public AgeError handleUserAgeValidation(InvalidUserAgeException exception) {
+        return new AgeError(exception.getMessage());
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

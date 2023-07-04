@@ -17,6 +17,13 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateUserResponse createUser(@RequestBody @Valid CreateUserRequest request) throws InvalidUserAgeException {
+        LocalDate birthDate = LocalDate.parse(request.getBirthDate());
+        LocalDate now = LocalDate.now();
+        int age = now.getYear() - birthDate.getYear();
+        if (age < 15) {
+            throw new InvalidUserAgeException("User's age must be 15 or above");
+        }
+
         System.out.println(request);
         CreateUserResponse response = new CreateUserResponse();
         response.setResponse("User created successfully");
