@@ -44,6 +44,11 @@ public class AccountController {
         return accountService.getAccounts();
     }
 
+    @GetMapping("getAccount/${accountId}")
+    public Account getAccountById(@PathVariable String accountId) {
+        return accountService.getAccountById(accountId);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
