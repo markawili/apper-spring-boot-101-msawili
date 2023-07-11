@@ -35,7 +35,7 @@ public class BloggerServiceImplementation implements BloggerService {
 
     @Override
     public List<Blogger> getAllBloggers() {
-        List<Blogger> bloggers = new ArrayList<Blogger>();
+        List<Blogger> bloggers = new ArrayList<>();
         bloggerRepository.findAll().forEach(bloggers::add);
         return bloggers;
     }

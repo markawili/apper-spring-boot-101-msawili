@@ -55,14 +55,14 @@ public class BloggerApi {
         List<Blogger> bloggerList = bloggerService.getAllBloggers();
         List<BloggerDetailsResponse> response = new ArrayList<BloggerDetailsResponse>();
 
-        bloggerList.stream().forEach(blogger -> {
+        for (Blogger blogger : bloggerList) {
             BloggerDetailsResponse itemResponse = new BloggerDetailsResponse();
             itemResponse.setId(blogger.getId());
             itemResponse.setEmail(blogger.getEmail());
             itemResponse.setName(blogger.getName());
             itemResponse.setDateRegistration(blogger.getCreatedAt());
             response.add(itemResponse);
-        });
+        }
 
         return response;
     }
