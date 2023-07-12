@@ -1,5 +1,7 @@
 package com.msawili.blogcapstone.controller;
 
+import com.msawili.blogcapstone.exceptions.BlogNotFoundException;
+import com.msawili.blogcapstone.exceptions.BloggerNotFoundException;
 import com.msawili.blogcapstone.model.Blog;
 import com.msawili.blogcapstone.payload.*;
 import com.msawili.blogcapstone.service.BlogService;
@@ -15,14 +17,16 @@ import java.util.List;
 @RequestMapping("blog")
 public class BlogApi {
     private final BlogService blogService;
+    private final CustomExceptionHandler customExceptionHandler;
     @Autowired
-    public BlogApi(BlogService blogService) {
+    public BlogApi(BlogService blogService, CustomExceptionHandler customExceptionHandler) {
         this.blogService = blogService;
+        this.customExceptionHandler = customExceptionHandler;
     }
 
     @PostMapping("create")
     @ResponseStatus(HttpStatus.CREATED)
-    public BlogResponse createBlog(@RequestBody @Valid CreateBlogRequest request) {
+    public BlogResponse createBlog(@RequestBody @Valid CreateBlogRequest request) throws BloggerNotFoundException {
         Blog blog = blogService.createBlog(request.getTitle(), request.getBody(), request.getBloggerId());
 
         return getSaveBlogResponse(blog);
@@ -30,7 +34,7 @@ public class BlogApi {
 
     @GetMapping("get/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public BlogDetails getBlog(@PathVariable String id) {
+    public BlogDetails getBlog(@PathVariable String id) throws BlogNotFoundException {
         Blog blog = blogService.getBlog(id);
 
         return getBlogDetails(blog);
@@ -47,15 +51,15 @@ public class BlogApi {
 
     @GetMapping("blogger/{blogger_id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<BloggerBlogDetails> getBlogsByBlogger(@PathVariable String bloggerId) {
-        List<Blog> blogs = blogService.getBlogsByBlogger(bloggerId);
+    public List<BloggerBlogDetails> getBlogsByBlogger(@PathVariable String blogger_id) throws BloggerNotFoundException {
+        List<Blog> blogs = blogService.getBlogsByBlogger(blogger_id);
 
         return getBloggerBlogDetails(blogs);
     }
 
     @PutMapping("update/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public BlogResponse updateBlog(@PathVariable String id, @RequestBody @Valid UpdateBlogRequest request) {
+    public BlogResponse updateBlog(@PathVariable String id, @RequestBody @Valid UpdateBlogRequest request) throws BlogNotFoundException {
         Blog blog = blogService.updateBlog(id, request.getTitle(), request.getBody());
 
         return getSaveBlogResponse(blog);
@@ -110,4 +114,5 @@ public class BlogApi {
         blogDetails.setLastUpdated(blog.getLastUpdate());
         return blogDetails;
     }
+
 }

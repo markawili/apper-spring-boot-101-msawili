@@ -1,5 +1,7 @@
 package com.msawili.blogcapstone.service.implementation;
 
+import com.msawili.blogcapstone.exceptions.BlogNotFoundException;
+import com.msawili.blogcapstone.exceptions.BloggerNotFoundException;
 import com.msawili.blogcapstone.model.Blog;
 import com.msawili.blogcapstone.model.Blogger;
 import com.msawili.blogcapstone.repository.BlogRepository;
@@ -23,9 +25,9 @@ public class BlogServiceImplementation implements BlogService {
     }
 
     @Override
-    public Blog createBlog(String title, String body, String bloggerId) {
+    public Blog createBlog(String title, String body, String bloggerId) throws BloggerNotFoundException {
         Blog newBlog = new Blog();
-        Blogger author = bloggerService.getBlogger(bloggerId);
+        Blogger author = getBloggerById(bloggerId);
 
         newBlog.setTitle(title);
         newBlog.setBody(body);
@@ -35,13 +37,19 @@ public class BlogServiceImplementation implements BlogService {
     }
 
     @Override
-    public Blog getBlog(String id) {
-        return blogRepository.findById(id).orElse(null);
+    public Blog getBlog(String id) throws BlogNotFoundException {
+        Blog blog = blogRepository.findById(id).orElse(null);
+
+        if (blog == null) {
+            throw new BlogNotFoundException("Blog not found");
+        } else {
+            return blog;
+        }
     }
 
     @Override
-    public Blog updateBlog(String id, String title, String body) {
-        Blog blog = blogRepository.findById(id).orElse(null);
+    public Blog updateBlog(String id, String title, String body) throws BlogNotFoundException {
+        Blog blog = getBlog(id);
         blog.setTitle(title);
         blog.setBody(body);
         return blogRepository.save(blog);
@@ -55,9 +63,20 @@ public class BlogServiceImplementation implements BlogService {
     }
 
     @Override
-    public List<Blog> getBlogsByBlogger(String bloggerId) {
-        List<Blog> blogs = new ArrayList<>();
-        blogRepository.findAllByBlogger_Id(bloggerId).forEach(blogs::add);
-        return blogs;
+    public List<Blog> getBlogsByBlogger(String bloggerId) throws BloggerNotFoundException {
+        if (bloggerService.getBlogger(bloggerId) == null) {
+            throw new BloggerNotFoundException("Blogger not found");
+        }
+        return new ArrayList<>(blogRepository.findAllByBlogger_Id(bloggerId));
     }
+
+    public  Blogger getBloggerById(String id) throws BloggerNotFoundException {
+        Blogger blogger = bloggerService.getBlogger(id);
+        if (blogger == null) {
+            throw new BloggerNotFoundException("Blogger not found");
+        } else {
+            return blogger;
+        }
+    }
+
 }
