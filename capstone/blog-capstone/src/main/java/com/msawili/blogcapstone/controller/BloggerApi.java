@@ -1,5 +1,7 @@
 package com.msawili.blogcapstone.controller;
 
+import com.msawili.blogcapstone.exceptions.BloggerNotFoundException;
+import com.msawili.blogcapstone.exceptions.EmailAlreadyRegisteredException;
 import com.msawili.blogcapstone.model.Blogger;
 import com.msawili.blogcapstone.payload.BloggerDetailsResponse;
 import com.msawili.blogcapstone.payload.CreateBloggerRequest;
@@ -25,7 +27,7 @@ public class BloggerApi {
 
     @PostMapping("create")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateBloggerResponse createBlogger(@RequestBody @Valid CreateBloggerRequest request) {
+    public CreateBloggerResponse createBlogger(@RequestBody @Valid CreateBloggerRequest request) throws EmailAlreadyRegisteredException {
         Blogger newBlogger = bloggerService.createBlogger(request.getEmail(), request.getName(), request.getPassword());
 
         CreateBloggerResponse response = new CreateBloggerResponse();
@@ -37,16 +39,10 @@ public class BloggerApi {
 
     @GetMapping("get/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public BloggerDetailsResponse getBlogger(@PathVariable String id) {
+    public BloggerDetailsResponse getBlogger(@PathVariable String id) throws BloggerNotFoundException {
         Blogger blogger = bloggerService.getBlogger(id);
 
-        BloggerDetailsResponse response = new BloggerDetailsResponse();
-        response.setId(blogger.getId());
-        response.setEmail(blogger.getEmail());
-        response.setName(blogger.getName());
-        response.setDateRegistration(blogger.getCreatedAt());
-
-        return response;
+        return getBloggerDetailsResponse(blogger);
     }
 
     @GetMapping("get")
@@ -56,15 +52,20 @@ public class BloggerApi {
         List<BloggerDetailsResponse> response = new ArrayList<BloggerDetailsResponse>();
 
         for (Blogger blogger : bloggerList) {
-            BloggerDetailsResponse itemResponse = new BloggerDetailsResponse();
-            itemResponse.setId(blogger.getId());
-            itemResponse.setEmail(blogger.getEmail());
-            itemResponse.setName(blogger.getName());
-            itemResponse.setDateRegistration(blogger.getCreatedAt());
+            BloggerDetailsResponse itemResponse = getBloggerDetailsResponse(blogger);
             response.add(itemResponse);
         }
 
         return response;
+    }
+
+    private static BloggerDetailsResponse getBloggerDetailsResponse(Blogger blogger) {
+        BloggerDetailsResponse itemResponse = new BloggerDetailsResponse();
+        itemResponse.setId(blogger.getId());
+        itemResponse.setEmail(blogger.getEmail());
+        itemResponse.setName(blogger.getName());
+        itemResponse.setDateRegistration(blogger.getCreatedAt());
+        return itemResponse;
     }
 
 }
